@@ -299,6 +299,52 @@ describe("advanced > ", () => {
   });
 
   describe("자유롭게 작성해보세요.", () => {
+    test("유틸 함수1 : findItemInCart", () => {
+      const p2 = findItemInCart(mockCart, "p2");
+      expect(p2).toEqual({
+        product: {
+          id: "p2",
+          name: "상품2",
+          price: 20000,
+          stock: 20,
+          discounts: [{ quantity: 10, rate: 0.15 }],
+        },
+        quantity: 10,
+      });
+
+      const p4 = findItemInCart(mockCart, "p4");
+      expect(p4).toBe(null);
+    });
+
+    test("유틸 함수2 : getRemainingStock", () => {
+      const remainingStockP1 = getRemainingStock(mockCart, mockProducts[0]);
+      expect(remainingStockP1).toBe(10);
+      const remainingStockP3 = getRemainingStock(mockCart, mockProducts[2]);
+      expect(remainingStockP3).toBe(0);
+      const remainingStockP4 = getRemainingStock(mockCart, {
+        id: "p4",
+        stock: 10,
+      });
+      expect(remainingStockP4).toBe(10);
+    });
+
+    test("유틸 함수3 : applyCouponDiscount", () => {
+      const discountedByCouponAmount = applyCouponDiscount(
+        10000,
+        mockCoupons[0]
+      );
+      expect(discountedByCouponAmount).toBe(5000);
+
+      const discountedByCouponPercentage = applyCouponDiscount(
+        10000,
+        mockCoupons[1]
+      );
+      expect(discountedByCouponPercentage).toBe(9000);
+
+      const discountedByNull = applyCouponDiscount(10000, null);
+      expect(discountedByNull).toBe(10000);
+    });
+
     test("새로운 hook 함수를 만든 후에 테스트 코드를 작성해서 실행해보세요", () => {
       expect(true).toBe(false);
     });

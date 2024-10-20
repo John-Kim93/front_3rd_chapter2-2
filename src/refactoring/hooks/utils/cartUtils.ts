@@ -65,20 +65,20 @@ export const calculateCartTotal = (
 };
 
 export const applyCouponDiscount = (
-  discountedPrice: number,
+  price: number,
   coupon: Coupon | null
 ): number => {
-  if (!coupon) return discountedPrice;
+  if (!coupon) return price;
   const { discountType, discountValue } = coupon;
   switch (discountType) {
     case "amount":
-      discountedPrice = Math.max(0, discountedPrice - discountValue);
+      price = Math.max(0, price - discountValue);
       break;
     case "percentage":
-      discountedPrice *= 1 - discountValue / 100;
+      price *= 1 - discountValue / 100;
       break;
   }
-  return discountedPrice;
+  return price;
 };
 
 export const updateCartItemQuantity = (
