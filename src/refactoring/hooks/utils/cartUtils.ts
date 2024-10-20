@@ -36,6 +36,7 @@ export const calculateCartTotal = (
   let totalBeforeDiscount = 0;
   let totalAfterDiscount = 0;
 
+  // 할인 적용
   cart.forEach((item) => {
     const { price } = item.product;
     const { quantity } = item;
@@ -50,26 +51,34 @@ export const calculateCartTotal = (
     totalAfterDiscount += price * quantity * (1 - discount);
   });
 
-  let totalDiscount = totalBeforeDiscount - totalAfterDiscount;
-
   // 쿠폰 적용
-  if (selectedCoupon) {
-    if (selectedCoupon.discountType === "amount") {
-      totalAfterDiscount = Math.max(
-        0,
-        totalAfterDiscount - selectedCoupon.discountValue
-      );
-    } else {
-      totalAfterDiscount *= 1 - selectedCoupon.discountValue / 100;
-    }
-    totalDiscount = totalBeforeDiscount - totalAfterDiscount;
-  }
+  totalAfterDiscount = applyCouponDiscount(totalAfterDiscount, selectedCoupon);
+
+  // 최종 할인 금액
+  let totalDiscount = totalBeforeDiscount - totalAfterDiscount;
 
   return {
     totalBeforeDiscount: Math.round(totalBeforeDiscount),
     totalAfterDiscount: Math.round(totalAfterDiscount),
     totalDiscount: Math.round(totalDiscount),
   };
+};
+
+export const applyCouponDiscount = (
+  discountedPrice: number,
+  coupon: Coupon | null
+): number => {
+  if (!coupon) return discountedPrice;
+  const { discountType, discountValue } = coupon;
+  switch (discountType) {
+    case "amount":
+      discountedPrice = Math.max(0, discountedPrice - discountValue);
+      break;
+    case "percentage":
+      discountedPrice *= 1 - discountValue / 100;
+      break;
+  }
+  return discountedPrice;
 };
 
 export const updateCartItemQuantity = (
