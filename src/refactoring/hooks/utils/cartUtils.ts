@@ -17,7 +17,10 @@ export const getMaxApplicableDiscount = (item: CartItem): number => {
 
   if (discounts.length > 0) {
     for (const discount of discounts) {
-      if (discount.quantity <= quantity && discount.rate > discountRate) {
+      const isBetterRate =
+        discount.quantity <= quantity && discount.rate > discountRate;
+
+      if (isBetterRate) {
         discountRate = discount.rate;
       }
     }
