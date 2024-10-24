@@ -1,7 +1,7 @@
 import { Button } from "../../_design/button/Button";
 import Card from "../../_design/card/Card";
 import useCart from "../_store/store-cart";
-import { IProduct } from "../_store/store-product";
+import useProduct, { IProduct } from "../_store/store-product";
 import { getRemainingStock } from "../_utils/cartUtils";
 import NameAndPrice from "./widgets/NameAndPrice";
 import StockAndDiscount from "./widgets/StockAndDiscount";
@@ -12,6 +12,7 @@ interface Props {
 
 export default function Item({ product }: Props) {
   const { cart, addToCart } = useCart();
+  const { updateProduct } = useProduct();
 
   const remainingStock = getRemainingStock(cart, product);
 
@@ -29,7 +30,13 @@ export default function Item({ product }: Props) {
         />
 
         <Button
-          onClick={() => addToCart(product)}
+          onClick={() => {
+            if (hasStock) {
+              const minusStock = product.stock - 1;
+              updateProduct({ ...product, stock: minusStock });
+              addToCart(product);
+            }
+          }}
           type={hasStock ? "type2" : "type3"}
           disabled={!hasStock}
         >
