@@ -1,16 +1,17 @@
 import { useState } from "react";
 import { describe, expect, test } from "vitest";
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
-import { CartPage } from "../../refactoring/components/CartPage";
+import { CartMain } from "../../refactoring/components/cart/MainPage";
 import { AdminPage } from "../../refactoring/components/admin/AdminPage";
-import { CartItem, Coupon, Product } from "../../types";
+import { CartItem, Coupon } from "../../types";
 import {
   applyCouponDiscount,
   findItemInCart,
   getRemainingStock,
-} from "../../refactoring/hooks/utils/cartUtils";
+} from "../../refactoring/components/cart/_utils/cartUtils";
+import { IProduct } from "../../refactoring/components/cart/_store/store-product";
 
-const mockProducts: Product[] = [
+const mockProducts: IProduct[] = [
   {
     id: "p1",
     name: "상품1",
@@ -81,16 +82,16 @@ const mockCoupons: Coupon[] = [
 ];
 
 const TestAdminPage = () => {
-  const [products, setProducts] = useState<Product[]>(mockProducts);
+  const [products, setProducts] = useState<IProduct[]>(mockProducts);
   const [coupons, setCoupons] = useState<Coupon[]>(mockCoupons);
 
-  const handleProductUpdate = (updatedProduct: Product) => {
+  const handleProductUpdate = (updatedProduct: IProduct) => {
     setProducts((prevProducts) =>
       prevProducts.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
     );
   };
 
-  const handleProductAdd = (newProduct: Product) => {
+  const handleProductAdd = (newProduct: IProduct) => {
     setProducts((prevProducts) => [...prevProducts, newProduct]);
   };
 
@@ -112,7 +113,7 @@ const TestAdminPage = () => {
 describe("advanced > ", () => {
   describe("시나리오 테스트 > ", () => {
     test("장바구니 페이지 테스트 > ", async () => {
-      render(<CartPage products={mockProducts} coupons={mockCoupons} />);
+      render(<CartMain products={mockProducts} coupons={mockCoupons} />);
       const product1 = screen.getByTestId("product-p1");
       const product2 = screen.getByTestId("product-p2");
       const product3 = screen.getByTestId("product-p3");

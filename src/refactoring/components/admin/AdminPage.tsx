@@ -1,12 +1,16 @@
 import { useState } from "react";
-import { Coupon, Discount, Product } from "../../../types.ts";
+import { IDiscount, IProduct } from "../cart/_store/store-product.ts";
+import ResponsiveTwoColGrid from "../_layout/ResponsiveTwoColGrid.tsx";
+import Title1 from "../_design/text/Title1.tsx";
+import Title2 from "../_design/text/Title2.tsx";
+import { ICoupon } from "../cart/_store/store-coupon.ts";
 
 interface Props {
-  products: Product[];
-  coupons: Coupon[];
-  onProductUpdate: (updatedProduct: Product) => void;
-  onProductAdd: (newProduct: Product) => void;
-  onCouponAdd: (newCoupon: Coupon) => void;
+  products: IProduct[];
+  coupons: ICoupon[];
+  onProductUpdate: (updatedProduct: IProduct) => void;
+  onProductAdd: (newProduct: IProduct) => void;
+  onCouponAdd: (newCoupon: ICoupon) => void;
 }
 
 export const AdminPage = ({
@@ -17,19 +21,19 @@ export const AdminPage = ({
   onCouponAdd,
 }: Props) => {
   const [openProductIds, setOpenProductIds] = useState<Set<string>>(new Set());
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [newDiscount, setNewDiscount] = useState<Discount>({
+  const [editingProduct, setEditingProduct] = useState<IProduct | null>(null);
+  const [newDiscount, setNewDiscount] = useState<IDiscount>({
     quantity: 0,
     rate: 0,
   });
-  const [newCoupon, setNewCoupon] = useState<Coupon>({
+  const [newCoupon, setNewCoupon] = useState<ICoupon>({
     name: "",
     code: "",
     discountType: "percentage",
     discountValue: 0,
   });
   const [showNewProductForm, setShowNewProductForm] = useState(false);
-  const [newProduct, setNewProduct] = useState<Omit<Product, "id">>({
+  const [newProduct, setNewProduct] = useState<Omit<IProduct, "id">>({
     name: "",
     price: 0,
     stock: 0,
@@ -49,7 +53,7 @@ export const AdminPage = ({
   };
 
   // handleEditProduct 함수 수정
-  const handleEditProduct = (product: Product) => {
+  const handleEditProduct = (product: IProduct) => {
     setEditingProduct({ ...product });
   };
 
@@ -134,11 +138,11 @@ export const AdminPage = ({
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">관리자 페이지</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <>
+      <Title1 type="type2">관리자 페이지</Title1>
+      <ResponsiveTwoColGrid>
         <div>
-          <h2 className="text-2xl font-semibold mb-4">상품 관리</h2>
+          <Title2 type="type1">상품 관리</Title2>
           <button
             onClick={() => setShowNewProductForm(!showNewProductForm)}
             className="bg-green-500 text-white px-4 py-2 rounded mb-4 hover:bg-green-600"
@@ -363,7 +367,7 @@ export const AdminPage = ({
           </div>
         </div>
         <div>
-          <h2 className="text-2xl font-semibold mb-4">쿠폰 관리</h2>
+          <Title2 type="type1">쿠폰 관리</Title2>
           <div className="bg-white p-4 rounded shadow">
             <div className="space-y-2 mb-4">
               <input
@@ -438,7 +442,7 @@ export const AdminPage = ({
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </ResponsiveTwoColGrid>
+    </>
   );
 };

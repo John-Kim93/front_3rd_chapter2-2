@@ -1,16 +1,16 @@
-import { IChildrenProps } from "../../shared/types";
-import Title1 from "../_design/Title1";
-import useAdmin from "../admin/store-admin";
-import { Button1 } from "./Button1";
+import { IChildrenProps } from "../shared/types";
+import useAdmin from "./admin/store-admin";
+import { Button } from "./_design/button/Button";
+import Title2 from "./_design/text/Title2";
 
 export default function Header() {
   const { isAdmin, setIsAdmin } = useAdmin((state) => state);
   return (
     <NavContainer>
-      <Title1>쇼핑몰 관리 시스템</Title1>
-      <Button1 onClick={() => setIsAdmin(!isAdmin)} type="primary">
+      <Title2 type="type1">쇼핑몰 관리 시스템</Title2>
+      <Button onClick={() => setIsAdmin(!isAdmin)} type="type1">
         {isAdmin ? "장바구니 페이지로" : "관리자 페이지로"}
-      </Button1>
+      </Button>
     </NavContainer>
   );
 }

@@ -1,37 +1,39 @@
 // useCart.ts
 import { useState } from "react";
-import { CartItem, Coupon, Product } from "../../types";
 import {
   calculateCartTotal,
   findItemInCart,
   getRemainingStock,
   updateCartItemQuantity,
-} from "./utils/cartUtils";
+} from "../components/cart/_utils/cartUtils";
+import { IProduct } from "../components/cart/_store/store-product";
+import { ICartItem } from "../components/cart/_store/store-cart";
+import { ICoupon } from "../components/cart/_store/store-coupon";
 
 export const useCart = (): {
-  cart: CartItem[];
-  addToCart: (product: Product) => void;
+  cart: ICartItem[];
+  addToCart: (product: IProduct) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, newQuantity: number) => void;
-  applyCoupon: (coupon: Coupon) => void;
+  applyCoupon: (coupon: ICoupon) => void;
   calculateTotal: () => {
     totalBeforeDiscount: number;
     totalAfterDiscount: number;
     totalDiscount: number;
   };
-  selectedCoupon: Coupon | null;
+  selectedCoupon: ICoupon | null;
 } => {
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const [cart, setCart] = useState<ICartItem[]>([]);
+  const [selectedCoupon, setSelectedCoupon] = useState<ICoupon | null>(null);
 
-  const addToCart = (product: Product) => {
+  const addToCart = (product: IProduct) => {
     const remainingStock = getRemainingStock(cart, product);
     if (remainingStock <= 0) {
       throw Error("재고가 없습니다!!");
     }
 
     setCart((prevCart) => {
-      const existingItem: CartItem | null = findItemInCart(cart, product.id);
+      const existingItem: ICartItem | null = findItemInCart(cart, product.id);
       if (existingItem) {
         return prevCart.map((item) =>
           item.product.id === product.id
@@ -55,7 +57,7 @@ export const useCart = (): {
     );
   };
 
-  const applyCoupon = (coupon: Coupon) => {
+  const applyCoupon = (coupon: ICoupon) => {
     setSelectedCoupon(coupon);
   };
 

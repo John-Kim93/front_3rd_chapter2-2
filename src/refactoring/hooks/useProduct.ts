@@ -1,22 +1,22 @@
 import { useState } from "react";
-import { Product } from "../../types.ts";
+import { IProduct } from "../components/cart/_store/store-product";
 
 export const useProducts = (
-  initialProducts: Product[]
+  initialProducts: IProduct[]
 ): {
-  products: Product[];
-  updateProduct: (updatedProduct: Product) => void;
-  addProduct: (newProduct: Product) => void;
+  products: IProduct[];
+  updateProduct: (updatedProduct: IProduct) => void;
+  addProduct: (newProduct: IProduct) => void;
 } => {
-  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [products, setProducts] = useState<IProduct[]>(initialProducts);
 
-  const updateProduct = (updatedProduct: Product) => {
+  const updateProduct = (updatedProduct: IProduct) => {
     setProducts((prevProducts) =>
       prevProducts.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
     );
   };
 
-  const addProduct = (newProduct: Product) => {
+  const addProduct = (newProduct: IProduct) => {
     setProducts((prevProducts) => [...prevProducts, newProduct]);
   };
 

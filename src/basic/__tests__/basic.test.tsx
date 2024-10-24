@@ -8,15 +8,17 @@ import {
   screen,
   within,
 } from "@testing-library/react";
-import { CartPage } from "../../refactoring/components/CartPage";
+import { CartMain } from "../../refactoring/components/cart/MainPage";
 import { AdminPage } from "../../refactoring/components/admin/AdminPage";
-import { CartItem, Coupon, Product } from "../../types";
-import * as cartUtils from "../../refactoring/hooks/utils/cartUtils";
+import { Coupon } from "../../types";
+import * as cartUtils from "../../refactoring/components/cart/_utils/cartUtils";
 import { useProducts } from "../../refactoring/hooks/useProduct";
 import { useCoupons } from "../../refactoring/hooks/useCoupon";
 import { useCart } from "../../refactoring/hooks/useCart";
+import { IProduct } from "../../refactoring/components/cart/_store/store-product";
+import { ICartItem } from "../../refactoring/components/cart/_store/store-cart";
 
-const mockProducts: Product[] = [
+const mockProducts: IProduct[] = [
   {
     id: "p1",
     name: "상품1",
@@ -55,16 +57,16 @@ const mockCoupons: Coupon[] = [
 ];
 
 const TestAdminPage = () => {
-  const [products, setProducts] = useState<Product[]>(mockProducts);
+  const [products, setProducts] = useState<IProduct[]>(mockProducts);
   const [coupons, setCoupons] = useState<Coupon[]>(mockCoupons);
 
-  const handleProductUpdate = (updatedProduct: Product) => {
+  const handleProductUpdate = (updatedProduct: IProduct) => {
     setProducts((prevProducts) =>
       prevProducts.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
     );
   };
 
-  const handleProductAdd = (newProduct: Product) => {
+  const handleProductAdd = (newProduct: IProduct) => {
     setProducts((prevProducts) => [...prevProducts, newProduct]);
   };
 
@@ -86,7 +88,7 @@ const TestAdminPage = () => {
 describe("basic > ", () => {
   describe("시나리오 테스트 > ", () => {
     test("장바구니 페이지 테스트 > ", async () => {
-      render(<CartPage products={mockProducts} coupons={mockCoupons} />);
+      render(<CartMain products={mockProducts} coupons={mockCoupons} />);
       const product1 = screen.getByTestId("product-p1");
       const product2 = screen.getByTestId("product-p2");
       const product3 = screen.getByTestId("product-p3");
@@ -273,7 +275,7 @@ describe("basic > ", () => {
   });
 
   describe("useProducts > ", () => {
-    const initialProducts: Product[] = [
+    const initialProducts: IProduct[] = [
       { id: "1", name: "Product 1", price: 100, stock: 10, discounts: [] },
     ];
 
@@ -301,7 +303,7 @@ describe("basic > ", () => {
 
     test("새로운 제품을 추가할 수 있다.", () => {
       const { result } = renderHook(() => useProducts(initialProducts));
-      const newProduct: Product = {
+      const newProduct: IProduct = {
         id: "2",
         name: "New Product",
         price: 200,
@@ -343,7 +345,7 @@ describe("basic > ", () => {
   });
 
   describe("cartUtils", () => {
-    const testProduct: Product = {
+    const testProduct: IProduct = {
       id: "1",
       name: "Test Product",
       price: 100,
@@ -356,30 +358,30 @@ describe("basic > ", () => {
 
     describe("calculateItemTotal", () => {
       test("할인 없이 총액을 계산해야 합니다.", () => {
-        const item: CartItem = { product: testProduct, quantity: 1 };
+        const item: ICartItem = { product: testProduct, quantity: 1 };
         expect(cartUtils.calculateItemTotal(item)).toBe(100);
       });
 
       test("수량에 따라 올바른 할인을 적용해야 합니다.", () => {
-        const item: CartItem = { product: testProduct, quantity: 5 };
+        const item: ICartItem = { product: testProduct, quantity: 5 };
         expect(cartUtils.calculateItemTotal(item)).toBe(400); // 500 * 0.8
       });
     });
 
     describe("getMaxApplicableDiscount", () => {
       test("할인이 적용되지 않으면 0을 반환해야 합니다.", () => {
-        const item: CartItem = { product: testProduct, quantity: 1 };
+        const item: ICartItem = { product: testProduct, quantity: 1 };
         expect(cartUtils.getMaxApplicableDiscount(item)).toBe(0);
       });
 
       test("적용 가능한 가장 높은 할인율을 반환해야 합니다.", () => {
-        const item: CartItem = { product: testProduct, quantity: 5 };
+        const item: ICartItem = { product: testProduct, quantity: 5 };
         expect(cartUtils.getMaxApplicableDiscount(item)).toBe(0.2);
       });
     });
 
     describe("calculateCartTotal", () => {
-      const cart: CartItem[] = [
+      const cart: ICartItem[] = [
         { product: testProduct, quantity: 2 },
         { product: { ...testProduct, id: "2", price: 200 }, quantity: 1 },
       ];
@@ -417,7 +419,7 @@ describe("basic > ", () => {
     });
 
     describe("updateCartItemQuantity", () => {
-      const cart: CartItem[] = [
+      const cart: ICartItem[] = [
         { product: testProduct, quantity: 2 },
         { product: { ...testProduct, id: "2" }, quantity: 1 },
       ];
@@ -442,7 +444,7 @@ describe("basic > ", () => {
   });
 
   describe("useCart > ", () => {
-    const testProduct: Product = {
+    const testProduct: IProduct = {
       id: "1",
       name: "Test Product",
       price: 100,
